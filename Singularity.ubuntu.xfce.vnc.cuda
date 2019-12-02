@@ -1,0 +1,74 @@
+Bootstrap: docker
+FROM: nvidia/cuda:10.1-cudnn7-devel-ubuntu16.04
+
+%environment
+    DISPLAY=:1
+    VNC_PORT=5901
+    NO_VNC_PORT=6901
+    export DISPLAY VNC_PORT NO_VNC_PORT
+
+### Envrionment config
+%environment
+    HOME=/headless
+    TERM=xterm
+    STARTUPDIR=/dockerstartup
+    INST_SCRIPTS=/headless/install
+    NO_VNC_HOME=/headless/noVNC
+    DEBIAN_FRONTEND=noninteractive
+    VNC_COL_DEPTH=24
+    VNC_RESOLUTION=1280x1024
+    VNC_PW=vncpassword
+    VNC_VIEW_ONLY=false
+    export HOME TERM STARTUPDIR INST_SCRIPTS NO_VNC_HOME DEBIAN_FRONTEND 
+    export VNC_COL_DEPTH VNC_RESOLUTION VNC_PW VNC_VIEW_ONLY
+
+%post
+    export HOME=/headless
+    export TERM=xterm    
+    export STARTUPDIR=/dockerstartup
+    export INST_SCRIPTS=/headless/install
+    export NO_VNC_HOME=/headless/noVNC
+    export DEBIAN_FRONTEND=noninteractive
+    export VNC_COL_DEPTH=24
+    export VNC_RESOLUTION=1280x1024
+    export VNC_PW=vncpassword
+    export VNC_VIEW_ONLY=false
+    export DISPLAY=:1
+    export VNC_PORT=5901
+    export NO_VNC_PORT=6901
+
+### Add all install scripts for further steps
+%files
+    ./src/common/install/ /headless/install/ 
+    ./src/ubuntu/install/ /headless/install2/
+
+%post
+    cp /headless/install2/*.sh /headless/install/
+    rm -rf /headless/install2
+
+%post
+    find $INST_SCRIPTS -name '*.sh' -exec chmod a+x {} +
+
+%environment
+    LANG='en_US.UTF-8' 
+    LANGUAGE='en_US:en' 
+    LC_ALL='en_US.UTF-8'
+    export LANG LANGUAGE LC_ALL
+
+%post
+    export LANG='en_US.UTF-8'
+    export LANGUAGE='en_US:en' 
+    export LC_ALL='en_US.UTF-8'
+    
+%files
+    ./src/common/xfce/ /headless/install3
+
+%post
+    cp -r /headless/install3/* /headless/
+    rm -rf /headless/install3
+
+%files
+    ./src/common/scripts /dockerstartup
+
+%runscript
+    /dockerstartup/vnc_startup.sh
