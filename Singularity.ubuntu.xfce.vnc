@@ -72,8 +72,8 @@ FROM: nvidia/cuda:10.1-cudnn7-devel-ubuntu16.04
 
 ### Install firefox and chrome browser
 #%post
-    #$INST_SCRIPTS/firefox.sh
-    #$INST_SCRIPTS/chrome.sh
+    $INST_SCRIPTS/firefox.sh
+    $INST_SCRIPTS/chrome.sh
 
 ### Install xfce UI
 %post
@@ -91,6 +91,20 @@ FROM: nvidia/cuda:10.1-cudnn7-devel-ubuntu16.04
 
 %post
     $INST_SCRIPTS/set_user_permission.sh $STARTUPDIR $HOME
+
+%post
+    mkdir /headless/Downloads
+    cd /headless/Downloads
+    wget https://download.jetbrains.com/python/pycharm-community-2019.2.4.tar.gz?_ga=2.259407245.629049172.1572658777-507377701.1572658777 -O pycharm-community-2019.2.4.tar.gz
+    tar zxvf pycharm-community-2019.2.4.tar.gz
+    rm -f pycharm-communtiy-2019.2.4.tar.gz
+    cd /headless/Desktop
+    echo "[Desktop Entry]\nType=Application\nName=Pycharm\nGenericName=Pycharm3\nComment=Pycharm3:The Python IDE\nExec="/headless/Downloads/pycharm-community-2019.2.4/bin/pycharm.sh" %f\nIcon=/headless/Downloads/pycharm-community-2019.2.4/bin/pycharm.png\nTerminal=pycharm\nCategories=Pycharm;" >> pycharm.desktop
+    apt-get install -y yum python-pip
+
+%post
+    touch /usr/bin/nvidia-smi
+
 
 %runscript
     /dockerstartup/vnc_startup.sh
