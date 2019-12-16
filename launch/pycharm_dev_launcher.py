@@ -13,6 +13,7 @@ def add_parameter():
     parser.add_argument("--workspace", required=True, help="user workspace")
     parser.add_argument("--resolution", required=False, help="resolution: WxH")
     parser.add_argument("--proxy", required=True, help="proxy listen ip and port")
+    parser.add_argument("--passwd", required=True, help="vnc access password")
     return parser
 
 
@@ -45,6 +46,6 @@ if __name__ == "__main__":
     print "Start Image ..."
     subprocess.call([
         "singularity", "exec", "--nv", "-w", "-B", args.workspace, args.sandbox, '/dockerstartup/vnc_startup_helper.sh',
-        display, vnc_port, no_vnc_port, args.resolution, args.proxy
+        display, vnc_port, no_vnc_port, args.resolution, args.proxy, args.passwd
     ])
 
