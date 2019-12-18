@@ -101,10 +101,13 @@ FROM: nvidia/cuda:10.1-cudnn7-devel-ubuntu16.04
     cd /headless/Desktop
     echo "[Desktop Entry]\nType=Application\nName=Pycharm\nGenericName=Pycharm3\nComment=Pycharm3:The Python IDE\nExec="/headless/Downloads/pycharm-community-2019.2.4/bin/pycharm.sh" %f\nIcon=/headless/Downloads/pycharm-community-2019.2.4/bin/pycharm.png\nTerminal=pycharm\nCategories=Pycharm;" >> pycharm.desktop
     apt-get install -y yum python-pip
+    pip install --upgrade pip
+
+%files
+    ./launch/pip /usr/bin/pip
 
 %post
     touch /usr/bin/nvidia-smi
-
 
 %runscript
     /dockerstartup/vnc_startup.sh
